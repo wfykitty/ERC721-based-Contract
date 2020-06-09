@@ -1,5 +1,6 @@
 //SPDX-License-Identifier: MIT
-pragma solidity >= 0.5.0 < 0.7.0;
+pragma solidity >=0.5.0 <0.7.0;
+
 
 /**
  * @dev Collection of functions related to the address type
@@ -28,7 +29,9 @@ library Address {
         // and 0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470 is returned
         // for accounts without code, i.e. `keccak256('')`
         bytes32 codehash;
-        bytes32 accountHash
+
+
+            bytes32 accountHash
          = 0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470;
         // solhint-disable-next-line no-inline-assembly
         assembly {
@@ -62,6 +65,7 @@ library Address {
     // }
 }
 
+
 //allows smart contracts to receive tokens in compliance of ERC721 standards
 interface IERC721TokenReceiver {
     /**
@@ -73,26 +77,43 @@ interface IERC721TokenReceiver {
      *
      * The selector can be obtained in Solidity with `IERC721.onERC721Received.selector`.
      */
-    function onERC721Received(address operator, address from, uint256 tokenId, bytes calldata data)
-    external returns (bytes4);
+    function onERC721Received(
+        address operator,
+        address from,
+        uint256 tokenId,
+        bytes calldata data
+    ) external returns (bytes4);
 }
+
 
 //contains functions for non=fungible tokens
 interface IERC721 {
     /**
      * @dev Emitted when `tokenId` token is transfered from `from` to `to`.
      */
-    event Transfer(address indexed from, address indexed to, uint256 indexed tokenId);
+    event Transfer(
+        address indexed from,
+        address indexed to,
+        uint256 indexed tokenId
+    );
 
     /**
      * @dev Emitted when `owner` enables `approved` to manage the `tokenId` token.
      */
-    event Approval(address indexed owner, address indexed approved, uint256 indexed tokenId);
+    event Approval(
+        address indexed owner,
+        address indexed approved,
+        uint256 indexed tokenId
+    );
 
     /**
      * @dev Emitted when `owner` enables or disables (`approved`) `operator` to manage all of its assets.
      */
-    event ApprovalForAll(address indexed owner, address indexed operator, bool approved);
+    event ApprovalForAll(
+        address indexed owner,
+        address indexed operator,
+        bool approved
+    );
 
     /**
      * @dev Returns the number of tokens in ``owner``'s account.
@@ -122,7 +143,11 @@ interface IERC721 {
      *
      * Emits a {Transfer} event.
      */
-    function safeTransferFrom(address from, address to, uint256 tokenId) external;
+    function safeTransferFrom(
+        address from,
+        address to,
+        uint256 tokenId
+    ) external;
 
     /**
      * @dev Transfers `tokenId` token from `from` to `to`.
@@ -138,7 +163,11 @@ interface IERC721 {
      *
      * Emits a {Transfer} event.
      */
-    function transferFrom(address from, address to, uint256 tokenId) external;
+    function transferFrom(
+        address from,
+        address to,
+        uint256 tokenId
+    ) external;
 
     /**
      * @dev Gives permission to `to` to transfer `tokenId` token to another account.
@@ -162,8 +191,11 @@ interface IERC721 {
      *
      * - `tokenId` must exist.
      */
-    
-    function getApproved(uint256 tokenId) external view returns (address operator);
+
+    function getApproved(uint256 tokenId)
+        external
+        view
+        returns (address operator); //mapping(address=>mapping(address=>bool)) _operator;
 
     /**
      * @dev Approve or remove `operator` as an operator for the caller.
@@ -174,10 +206,8 @@ interface IERC721 {
      * - The `operator` cannot be the caller.
      *
      * Emits an {ApprovalForAll} event.
-     */ //mapping(address=>mapping(address=>bool)) _operator;
- 
+     */
     function setApprovalForAll(address operator, bool _approved) external;
-
 
     /**
      * @dev Returns if the `operator` is allowed to manage all of the assets of `owner`.
@@ -185,31 +215,39 @@ interface IERC721 {
      * See {setApprovalForAll}
      */
 
-    function isApprovedForAll(address owner, address operator) external view returns (bool);
+    function isApprovedForAll(address owner, address operator)
+        external
+        view
+        returns (bool);
 
     /**
-      * @dev Safely transfers `tokenId` token from `from` to `to`.
-      *
-      * Requirements:
-      *
+     * @dev Safely transfers `tokenId` token from `from` to `to`.
+     *
+     * Requirements:
+     *
      * - `from` cannot be the zero address.
      * - `to` cannot be the zero address.
-      * - `tokenId` token must exist and be owned by `from`.
-      * - If the caller is not `from`, it must be approved to move this token by either {approve} or {setApprovalForAll}.
-      * - If `to` refers to a smart contract, it must implement {IERC721Receiver-onERC721Received}, which is called upon a safe transfer.
-      *
-      * Emits a {Transfer} event.
-      */
-    function safeTransferFrom(address from, address to, uint256 tokenId, bytes calldata data) external;
+     * - `tokenId` token must exist and be owned by `from`.
+     * - If the caller is not `from`, it must be approved to move this token by either {approve} or {setApprovalForAll}.
+     * - If `to` refers to a smart contract, it must implement {IERC721Receiver-onERC721Received}, which is called upon a safe transfer.
+     *
+     * Emits a {Transfer} event.
+     */
+    function safeTransferFrom(
+        address from,
+        address to,
+        uint256 tokenId,
+        bytes calldata data
+    ) external;
 }
 
-contract ERC721 is IERC721{
 
+contract ERC721 is IERC721 {
     using Address for address;
     mapping(address => uint256) private ownerBalance;
     mapping(uint256 => address) private tokenOwner;
     mapping(uint256 => address) private approveIdOfToken;
-     //create a mapping for operator
+    //create a mapping for operator
     mapping(address => mapping(address => bool)) private operators;
 
     bytes4 internal constant MAGIC_ON_ERC721_RECEIVED = 0x150b7a02;
@@ -240,19 +278,32 @@ contract ERC721 is IERC721{
         return approveIdOfToken[_tokenId];
     }
 
-    function safeTransferFrom(address _from, address _to, uint256 _tokenId, bytes calldata data) external payable {
+    function safeTransferFrom(
+        address _from,
+        address _to,
+        uint256 _tokenId,
+        bytes calldata data
+    ) external {
         _safeTransfer(_from, _to, _tokenId, data);
     }
 
-    function safeTransferFrom(address _from, address _to, uint256 _tokenId) external payable {
+    function safeTransferFrom(
+        address _from,
+        address _to,
+        uint256 _tokenId
+    ) external {
         _safeTransfer(_from, _to, _tokenId, "");
     }
 
-    function transferFrom(address _from, address _to, uint256 _tokenId) external payable {
+    function transferFrom(
+        address _from,
+        address _to,
+        uint256 _tokenId
+    ) external {
         _transfer(_from, _to, _tokenId);
     }
 
-    function approve(address _approved, uint256 _tokenId) external payable {
+    function approve(address _approved, uint256 _tokenId) external {
         //make sure only owner can approve
         address owner = tokenOwner[_tokenId];
         require(msg.sender == owner, "ERC721Contract: Only owner can approve");
@@ -266,31 +317,54 @@ contract ERC721 is IERC721{
         emit ApprovalForAll(msg.sender, _operator, _approved);
     }
 
-    function isApprovedForAll(address _owner, address _operator) external view returns (bool) {
+    function isApprovedForAll(address _owner, address _operator)
+        external
+        view
+        returns (bool)
+    {
         return operators[_owner][_operator];
     }
 
-    function _transfer(address _from, address _to, uint256 _tokenId) internal allowTransfer(_tokenId) {
+    function _transfer(
+        address _from,
+        address _to,
+        uint256 _tokenId
+    ) internal allowTransfer(_tokenId) {
         ownerBalance[_from] -= 1;
         ownerBalance[_to] += 1;
-       // ensure the token owner is changed
+        // ensure the token owner is changed
         tokenOwner[_tokenId] = _to;
         emit Transfer(_from, _to, _tokenId);
     }
 
-    function _safeTransfer(address _from, address _to, uint256 _tokenId, bytes memory data) internal {
+    function _safeTransfer(
+        address _from,
+        address _to,
+        uint256 _tokenId,
+        bytes memory data
+    ) internal {
         _transfer(_from, _to, _tokenId);
         if (_to.isContract()) {
             bytes4 returnval = IERC721TokenReceiver(_to).onERC721Received(
-                msg.sender, _to, _tokenId, data);
-            require(returnval == MAGIC_ON_ERC721_RECEIVED, "receipient cannot take ERC721 tokens");
+                msg.sender,
+                _to,
+                _tokenId,
+                data
+            );
+            require(
+                returnval == MAGIC_ON_ERC721_RECEIVED,
+                "receipient cannot take ERC721 tokens"
+            );
         }
     }
 
     modifier allowTransfer(uint256 _tokenId) {
         address owner = tokenOwner[_tokenId];
-        require(owner == msg.sender || approveIdOfToken[_tokenId] == msg.sender || operators[owner][msg.sender] == true, 
-        "ERC721Contract: Not Authorized to transfer"
+        require(
+            owner == msg.sender ||
+                approveIdOfToken[_tokenId] == msg.sender ||
+                operators[owner][msg.sender] == true,
+            "ERC721Contract: Not Authorized to transfer"
         );
         _;
     }
